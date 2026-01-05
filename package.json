@@ -1,0 +1,32 @@
+{
+  "name": "blog-template",
+  "version": "1.0.0",
+  "description": "基于 VuePress 2 的个人博客模板（请根据实际项目修改）",
+  "scripts": {
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs",
+    "serve": "vuepress serve docs"
+  },
+  "keywords": [
+    "blog",
+    "vuepress",
+    "vuepress-reco"
+  ],
+  "author": {
+    "name": "你的名字",
+    "email": "your-email@example.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/your-repo.git"
+  },
+  "devDependencies": {
+    "@vuepress/bundler-vite": "2.0.0-rc.19",
+    "@vuepress/client": "2.0.0-rc.19",
+    "@vuepress/utils": "2.0.0-rc.19",
+    "vue": "^3.4.0",
+    "vuepress": "2.0.0-rc.19",
+    "vuepress-theme-reco": "2.0.0-rc.26"
+  }
+}

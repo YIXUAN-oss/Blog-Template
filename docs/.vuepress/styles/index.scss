@@ -1,0 +1,1445 @@
+// 导航栏容器布局优化
+.navbar,
+.navbar-container,
+.navbar-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1.5rem !important; // 导航栏元素之间的统一间隔
+}
+
+// 导航栏标题和搜索框之间的间隔
+.navbar .navbar-brand,
+.navbar .site-name,
+.navbar .reco-site-name,
+.navbar-brand,
+.site-name,
+.reco-site-name {
+  margin-right: 1.5rem !important;
+}
+
+// 搜索框样式优化 - 使用更高优先级的选择器
+body .navbar-container .search-box,
+body .search-box,
+.navbar-container .search-box,
+.navbar .search-box,
+.search-box {
+  position: relative !important;
+  width: 400px !important; // 增加搜索框宽度
+  display: inline-block !important;
+  min-width: 230px !important;
+  max-width: 230px !important;
+  margin-left: 1.5rem !important; // 与标题之间的间隔
+
+  input {
+    width: 100% !important; // 输入框占满搜索框
+    min-width: 100% !important;
+    max-width: 100% !important;
+    padding-right: 80px !important;
+  }
+}
+
+// 额外的搜索框输入框样式
+.search-box input[type="search"] {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+}
+
+// 搜索框快捷键显示（如果主题没有内置）
+.navbar .navbar-search,
+.navbar-search {
+  position: relative;
+  margin-left: 1.5rem !important; // 与标题之间的间隔
+
+  .search-box {
+    position: relative;
+    width: 230px !important;
+    min-width: 230px !important;
+    max-width: 230px !important;
+
+    input {
+      width: 100% !important;
+      padding-right: 80px !important;
+    }
+
+    &::after {
+      content: 'Ctrl K';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--reco-bg-color-secondary, rgba(0, 0, 0, 0.05));
+      color: var(--reco-text-color-secondary, #666);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--reco-border-color, rgba(0, 0, 0, 0.1));
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  }
+}
+
+// 暗黑模式下的搜索框快捷键
+[data-theme="dark"] {
+  .navbar-search .search-box::after {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+// 导航栏图标优化
+.navbar-items {
+  .navbar-item {
+
+    a,
+    .navbar-dropdown-title {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+
+      .icon,
+      i {
+        font-size: 18px !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+        margin-right: 4px;
+      }
+
+      &:hover {
+
+        .icon,
+        i {
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    // 下拉菜单图标
+    .navbar-dropdown-wrapper {
+      .navbar-dropdown-title {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+      }
+    }
+  }
+}
+
+// 确保图标和文字对齐
+.reco-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  margin-right: 4px !important;
+}
+
+// 移动端优化
+@media (max-width: 768px) {
+  .navbar .navbar-brand,
+  .navbar .site-name,
+  .navbar .reco-site-name,
+  .navbar-brand,
+  .site-name,
+  .reco-site-name {
+    margin-right: 1rem !important;
+  }
+  
+  .navbar-container .search-box,
+  .navbar .search-box,
+  .search-box {
+    width: 200px !important; // 移动端使用较小宽度
+    min-width: 200px !important;
+    max-width: 200px !important;
+    margin-left: 1rem !important; // 移动端使用较小的间隔
+  }
+  
+  .navbar .navbar-search,
+  .navbar-search {
+    width: 200px !important;
+    margin-left: 1rem !important; // 移动端使用较小的间隔
+  }
+  
+  .navbar-search .search-box::after {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+}
+
+// Mac 系统快捷键显示
+@media (platform: macos) {
+  .navbar-search .search-box::after {
+    content: '⌘ K';
+  }
+}
+
+// =========================
+// 留言板页面样式（Guestbook）
+// =========================
+
+.guestbook-info {
+  background: #f7f7fe;
+  border-left: 4px solid #5f69e8;
+  border-radius: 8px;
+  padding: 30px;
+  margin: 30px 0;
+}
+
+.guestbook-info .info-box {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.guestbook-info .info-icon-circle {
+  width: 20px;
+  height: 20px;
+  background: #5d67e8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.guestbook-info .info-icon {
+  width: 12px;
+  height: 12px;
+  fill: #ffffff;
+}
+
+.guestbook-info .info-title {
+  font-weight: 600;
+  color: #5d67e8;
+  font-size: 1em;
+}
+
+.guestbook-info p {
+  margin: 0;
+  line-height: 1.8;
+  color: var(--text-color, #2c3e50);
+}
+
+.guestbook-info a {
+  color: #5d67e8;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.3s;
+}
+
+.guestbook-info a:hover {
+  opacity: 0.8;
+}
+
+.guestbook-info .external-link-icon {
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  margin-left: 2px;
+  opacity: 0.7;
+}
+
+// 阅读进度条样式
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  z-index: 9999;
+  transition: width 0.2s ease;
+}
+
+// 图片优化样式
+img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  // 图片居中显示并增加间距
+  margin: 2rem auto !important;
+  // 防止图片加载时的布局偏移
+  aspect-ratio: attr(width) / attr(height);
+  // 添加圆角和阴影
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  // 图片懒加载效果（优化版）
+  &[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    // 添加模糊占位符效果（骨架屏）
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-shimmer 1.5s ease-in-out infinite;
+    min-height: 200px; // 防止布局抖动
+
+    &.loaded {
+      opacity: 1;
+      background: none;
+      animation: none;
+      min-height: auto;
+    }
+  }
+  
+  // 图片加载错误时的样式
+  &[data-error="true"] {
+    opacity: 0.5;
+    filter: grayscale(100%);
+  }
+}
+
+// 确保博客内容区域内的所有图片都居中，并增加图片间距
+// 使用更高优先级的选择器确保样式生效
+body .content__default,
+body .page-content-wrapper,
+body .theme-reco-content,
+body .page .theme-reco-content,
+body .markdown-body,
+.page .content__default,
+.page .page-content-wrapper,
+.page .theme-reco-content,
+.theme-reco-content {
+  img {
+    display: block !important;
+    margin: 2rem auto !important; // 增加上下间距，确保图片之间有足够的间隔
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 8px; // 可选：添加圆角使图片更美观
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // 可选：添加轻微阴影
+  }
+  
+  // 图片容器居中
+  p img,
+  figure img,
+  .image-wrapper img {
+    display: block !important;
+    margin: 2rem auto !important; // 增加间距
+  }
+  
+  // 图片链接也居中
+  a img {
+    display: block !important;
+    margin: 2rem auto !important; // 增加间距
+  }
+  
+  // 确保连续的图片之间有足够的间隔
+  img + img {
+    margin-top: 2.5rem !important; // 连续图片之间的间距更大
+  }
+  
+  // 段落中的图片也需要间距
+  p:has(img) {
+    margin: 2rem 0 !important;
+    
+    img {
+      margin: 0 auto !important;
+    }
+  }
+  
+  // 图片前后的段落也需要间距
+  img + p,
+  p + img {
+    margin-top: 2rem !important;
+  }
+}
+
+// 额外的全局图片样式，确保所有图片都居中并有间距
+body .page img,
+body .theme-reco-content img,
+body .content__default img {
+  display: block !important;
+  margin: 2rem auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+// 处理段落中的图片
+body .page p img,
+body .theme-reco-content p img,
+body .content__default p img {
+  display: block !important;
+  margin: 2rem auto !important;
+}
+
+// 加载动画
+@keyframes loading-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// 暗色模式下的占位符
+[data-theme="dark"] {
+  img[loading="lazy"] {
+    background: linear-gradient(90deg, #2a2a2a 25%, #1a1a1a 50%, #2a2a2a 75%);
+    background-size: 200% 100%;
+  }
+}
+
+// 平滑滚动
+html {
+  scroll-behavior: smooth;
+}
+
+// 代码块复制按钮优化
+.code-copy-btn {
+  opacity: 0.7;
+  transition: all 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+// 侧边栏目录激活状态
+.sidebar {
+  .sidebar-link {
+    &.active {
+      color: var(--reco-brand-color, #3eaf7c);
+      font-weight: 600;
+      border-left: 3px solid var(--reco-brand-color, #3eaf7c);
+      padding-left: 15px;
+    }
+  }
+}
+
+// 卡片悬停效果增强
+.card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// ============================================
+// 页面背景优化 - 借鉴 vuepress-reco 官网
+// ============================================
+
+// 页面整体背景 - 纯色
+body {
+  background: #ffffff;
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] body {
+  background: #1a1a1a;
+}
+
+// 首页 Banner 区域背景透明，显示几何背景
+.banner-brand__wrapper {
+  background: transparent !important;
+  position: relative;
+  z-index: 1;
+}
+
+// 页面容器背景透明
+.page,
+.page-wrapper,
+.theme-container,
+.home-blog {
+  background: transparent !important;
+}
+
+// 深色模式优化
+[data-theme="dark"] {
+
+  // 阅读进度条
+  .reading-progress {
+    background: linear-gradient(to right, #c4b5fd, #a78bfa, #8b5cf6);
+    box-shadow: 0 0 15px rgba(167, 139, 250, 0.6);
+  }
+
+  // 链接颜色
+  a {
+    color: #a78bfa;
+
+    &:hover {
+      color: #c4b5fd;
+    }
+  }
+
+  // 卡片样式 - 深色模式下使用深灰色
+  .tutorial-card,
+  .info-item,
+  .path-card,
+  .tip-item,
+  .tutorial-item {
+    background: #2a2a2a !important;
+    border-color: rgba(255, 255, 255, 0.1);
+
+    &:hover {
+      background: #303030 !important;
+      border-color: rgba(139, 92, 246, 0.5);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  // 个人信息卡片
+  .profile-card {
+    background: rgba(26, 26, 26, 0.95);
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .profile-trigger {
+    border-color: rgba(139, 92, 246, 0.6);
+    background: rgba(26, 26, 26, 0.9);
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+  }
+
+  // 标签
+  .tag {
+    background: rgba(139, 92, 246, 0.2);
+    color: #c4b5fd;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+
+  // 按钮
+  .tutorial-more-btn,
+  .cta-btn,
+  .contact-btn {
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+
+    &:hover {
+      box-shadow: 0 12px 30px rgba(139, 92, 246, 0.5);
+    }
+  }
+
+  // CTA 区域
+  .cta-content {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+    box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
+  }
+
+  // 关于卡片
+  .about-card {
+    background: linear-gradient(135deg,
+        rgba(139, 92, 246, 0.05) 0%,
+        rgba(124, 58, 237, 0.05) 100%);
+    border-color: rgba(139, 92, 246, 0.3);
+  }
+}
+
+// 主题切换平滑动画
+* {
+  transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+// ============================================
+// 强制移除教程卡片的所有下划线
+// ============================================
+.tutorial-card,
+a.tutorial-card {
+  text-decoration: none !important;
+
+  &:link,
+  &:visited,
+  &:hover,
+  &:active {
+    text-decoration: none !important;
+  }
+
+  * {
+    text-decoration: none !important;
+    border-bottom: none !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-decoration: none !important;
+    border-bottom: none !important;
+  }
+
+  p,
+  span,
+  div {
+    text-decoration: none !important;
+    border-bottom: none !important;
+  }
+}
+
+// 确保所有状态下都没有下划线
+a.tutorial-card:link,
+a.tutorial-card:visited,
+a.tutorial-card:hover,
+a.tutorial-card:active,
+a.tutorial-card:focus {
+  text-decoration: none !important;
+
+  * {
+    text-decoration: none !important;
+  }
+}
+
+// 移除VuePress主题可能添加的下划线
+.page a.tutorial-card,
+.theme-reco a.tutorial-card,
+.content a.tutorial-card {
+  text-decoration: none !important;
+  border-bottom: none !important;
+
+  &:hover {
+    text-decoration: none !important;
+    border-bottom: none !important;
+  }
+
+  * {
+    text-decoration: none !important;
+    border-bottom: none !important;
+  }
+}
+
+// ============================================
+// 文章详情页内容宽度优化
+// ============================================
+
+// 增加文章内容区域的最大宽度
+.page-container,
+.page .theme-reco-content,
+.theme-reco-content {
+  max-width: 1200px !important;
+}
+
+// 文章内容主体宽度
+.page-content-wrapper,
+.content__default {
+  max-width: 1200px !important;
+  padding-left: 2.5rem !important;
+  padding-right: 2.5rem !important;
+}
+
+// 调整侧边栏和内容区域的布局
+.page {
+  .page-wrapper {
+    max-width: 1400px !important;
+    margin: 0 auto;
+  }
+}
+
+// 平板设备响应式
+@media (max-width: 1400px) {
+  .page-container,
+  .page .theme-reco-content,
+  .theme-reco-content {
+    max-width: 95% !important;
+  }
+}
+
+// 移动设备响应式
+@media (max-width: 768px) {
+  .page-content-wrapper,
+  .content__default {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+// ============================================
+// 侧边栏宽度优化
+// ============================================
+
+// 增加左侧侧边栏宽度
+.sidebar,
+.sidebar-wrapper,
+.page-sidebar {
+  width: 320px !important;
+  max-width: 320px !important;
+}
+
+// 侧边栏内部内容宽度
+.sidebar-items,
+.sidebar-group,
+.sidebar-links {
+  width: 100%;
+}
+
+// 侧边栏标题文字不换行，超出显示省略号
+.sidebar-heading,
+.sidebar-link {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 1rem;
+}
+
+// 侧边栏分组标题
+.sidebar-group-title {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+// 侧边栏链接
+.sidebar-link {
+  padding: 0.5rem 1rem 0.5rem 2rem;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  
+  &:hover {
+    background-color: var(--reco-bg-color-secondary, rgba(0, 0, 0, 0.05));
+  }
+  
+  &.active {
+    color: var(--reco-brand-color, #3eaf7c);
+    background-color: var(--reco-bg-color-secondary, rgba(62, 175, 124, 0.1));
+  }
+}
+
+// 调整主内容区域的左边距以适应更宽的侧边栏
+.page.has-sidebar {
+  padding-left: 340px !important;
+}
+
+// 移动端侧边栏保持原有宽度
+@media (max-width: 1024px) {
+  .sidebar,
+  .sidebar-wrapper,
+  .page-sidebar {
+    width: 280px !important;
+    max-width: 280px !important;
+  }
+  
+  .page.has-sidebar {
+    padding-left: 300px !important;
+  }
+}
+
+// 移动设备侧边栏响应式
+@media (max-width: 768px) {
+  .sidebar,
+  .sidebar-wrapper,
+  .page-sidebar {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .page.has-sidebar {
+    padding-left: 0 !important;
+  }
+}
+
+// ============================================
+// Waline 评论系统样式优化
+// ============================================
+
+// 评论区域整体样式
+// 默认隐藏评论，只在博客文章页面显示（通过 JavaScript 控制）
+#waline,
+.waline-container,
+.waline-wrapper,
+.vuepress-reco-wrapper-page .waline-wrapper,
+.page .waline-wrapper {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color, #eaecef);
+  max-width: 100% !important;
+  width: 100% !important;
+  display: none !important; // 默认隐藏，由 JavaScript 控制显示
+  visibility: hidden !important;
+}
+
+// 当 JavaScript 检测到是博客文章页面时，会设置 display: block
+// 这里提供备用样式，确保显示时样式正确
+.waline-wrapper[style*="display: block"],
+.waline-wrapper[style*="display:block"],
+#waline[style*="display: block"],
+#waline[style*="display:block"] {
+  display: block !important;
+  visibility: visible !important;
+}
+
+// 评论框容器宽度优化 - 确保充分利用页面宽度
+.waline-wrapper > div,
+.waline-container > div,
+.waline-wrapper .waline,
+.waline-container .waline {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+// 确保评论区域不受父容器宽度限制，充分利用页面宽度
+.page .waline-wrapper,
+.theme-reco-content .waline-wrapper,
+.content__default .waline-wrapper,
+.page-container .waline-wrapper {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+// 评论区域可以稍微超出内容区域，让评论框更宽
+.page .waline-wrapper {
+  margin-left: -2.5rem;
+  margin-right: -2.5rem;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  max-width: calc(100% + 5rem) !important;
+}
+
+// 移动端保持正常宽度
+@media (max-width: 768px) {
+  .page .waline-wrapper {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    max-width: 100% !important;
+  }
+}
+
+// 评论输入框区域
+.waline-input-wrapper,
+.waline-editor,
+.waline-editor-wrapper {
+  background: var(--bg-color-secondary, #f6f8fa);
+  border: 1px solid var(--border-color, #eaecef);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+  
+  &:hover {
+    border-color: var(--accent-color, #3eaf7c);
+    box-shadow: 0 2px 8px rgba(62, 175, 124, 0.1);
+  }
+  
+  &:focus-within {
+    border-color: var(--accent-color, #3eaf7c);
+    box-shadow: 0 4px 12px rgba(62, 175, 124, 0.15);
+  }
+}
+
+// 隐藏用户信息输入框（昵称、邮箱、网址）
+.waline-meta,
+.waline-meta-wrapper,
+.waline-user-info,
+.waline-input-wrapper .waline-meta,
+.waline-editor .waline-meta,
+.waline-comment-input .waline-meta,
+.waline-form .waline-meta,
+.waline-meta-item,
+.waline-meta input[type="text"],
+.waline-meta input[type="email"],
+.waline-meta input[type="url"],
+.waline-input-wrapper input[placeholder*="昵称"],
+.waline-input-wrapper input[placeholder*="邮箱"],
+.waline-input-wrapper input[placeholder*="网址"],
+.waline-input-wrapper input[placeholder*="Nickname"],
+.waline-input-wrapper input[placeholder*="Email"],
+.waline-input-wrapper input[placeholder*="Website"],
+.waline-editor input[type="text"],
+.waline-editor input[type="email"],
+.waline-editor input[type="url"] {
+  display: none !important;
+}
+
+// 隐藏用户信息输入框的容器和分隔线
+.waline-meta-wrapper,
+.waline-user-meta,
+.waline-meta-separator,
+.waline-input-wrapper > .waline-meta,
+.waline-editor > .waline-meta {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+// 隐藏包含用户信息输入的行
+.waline-input-wrapper > div:has(input[placeholder*="昵称"]),
+.waline-input-wrapper > div:has(input[placeholder*="邮箱"]),
+.waline-input-wrapper > div:has(input[placeholder*="网址"]),
+.waline-editor > div:has(input[type="text"]),
+.waline-editor > div:has(input[type="email"]) {
+  display: none !important;
+}
+
+// 确保登录按钮显示在输入框上方或合适位置
+.waline-login {
+  margin-bottom: 1rem;
+  text-align: center;
+  
+  button {
+    background: var(--accent-color, #3eaf7c);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.625rem 1.5rem;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(62, 175, 124, 0.2);
+    
+    &:hover {
+      background: #2d8f5f;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(62, 175, 124, 0.3);
+    }
+  }
+}
+
+// 评论输入框
+.waline-editor textarea,
+.waline-input,
+.waline-editor textarea {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-color, #2c3e50);
+  resize: vertical;
+  min-height: 120px;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  transition: all 0.2s ease;
+  
+  &::placeholder {
+    color: var(--text-color-secondary, #8b949e);
+  }
+  
+  &:focus {
+    outline: none;
+  }
+}
+
+// 输入框工具栏
+.waline-toolbar,
+.waline-editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color, #eaecef);
+  
+  button,
+  .toolbar-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-color-secondary, #8b949e);
+    cursor: pointer;
+    padding: 0.375rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: var(--bg-color-secondary, #f6f8fa);
+      color: var(--accent-color, #3eaf7c);
+    }
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// 评论提交按钮
+.waline-btn,
+.waline-submit,
+.waline-submit-btn,
+button.waline-btn {
+  background: var(--accent-color, #3eaf7c);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.625rem 1.5rem;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(62, 175, 124, 0.2);
+  
+  &:hover {
+    background: #2d8f5f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(62, 175, 124, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// 字符计数
+.waline-word-count {
+  font-size: 12px;
+  color: var(--text-color-secondary, #8b949e);
+  margin-left: auto;
+}
+
+// 评论列表容器
+.waline-comment-list,
+.waline-list {
+  margin-top: 2rem;
+}
+
+// 评论标题和排序
+.waline-comment-count,
+.waline-count {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color, #2c3e50);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+// 排序选项
+.waline-sort-btn,
+.waline-sort {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 14px;
+  
+  button,
+  .sort-item {
+    background: transparent;
+    border: 1px solid var(--border-color, #eaecef);
+    border-radius: 6px;
+    padding: 0.375rem 0.875rem;
+    color: var(--text-color-secondary, #8b949e);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    
+    &:hover {
+      border-color: var(--accent-color, #3eaf7c);
+      color: var(--accent-color, #3eaf7c);
+    }
+    
+    &.active {
+      background: var(--accent-color, #3eaf7c);
+      border-color: var(--accent-color, #3eaf7c);
+      color: #ffffff;
+    }
+  }
+}
+
+// 单个评论项
+.waline-comment,
+.waline-item,
+.waline-comment-item {
+  background: var(--bg-color, #ffffff);
+  border: 1px solid var(--border-color, #eaecef);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &:hover {
+    border-color: var(--accent-color, #3eaf7c);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  // 评论项之间的分隔线
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-color, #eaecef);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:not(:last-child)::after {
+    opacity: 0.5;
+  }
+}
+
+// 评论头部（用户信息）
+.waline-comment-header,
+.waline-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+}
+
+// 用户头像
+.waline-avatar,
+.waline-comment-avatar,
+.waline-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color, #eaecef);
+  transition: all 0.3s ease;
+  object-fit: cover;
+  
+  &:hover {
+    border-color: var(--accent-color, #3eaf7c);
+    transform: scale(1.05);
+  }
+}
+
+// 用户信息
+.waline-comment-info,
+.waline-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+// 用户名
+.waline-comment-author,
+.waline-author {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-color, #2c3e50);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// 用户标签（博主、管理员等）
+.waline-badge,
+.waline-author-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  margin-left: 0.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+// 验证标记
+.waline-verified {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent-color, #3eaf7c);
+  margin-left: 0.25rem;
+  
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// 评论时间和设备信息
+.waline-comment-time,
+.waline-time {
+  font-size: 13px;
+  color: var(--text-color-secondary, #8b949e);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+// 评论内容
+.waline-comment-content,
+.waline-content {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-color, #2c3e50);
+  margin: 1rem 0;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  
+  p {
+    margin: 0.5rem 0;
+    
+    &:first-child {
+      margin-top: 0;
+    }
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  // 代码块样式
+  code {
+    background: var(--code-bg-color, #f6f8fa);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: 'Consolas', 'Monaco', monospace;
+  }
+  
+  // 链接样式
+  a {
+    color: var(--accent-color, #3eaf7c);
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// 评论操作按钮
+.waline-comment-action,
+.waline-action {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color, #eaecef);
+}
+
+// 操作按钮（点赞、回复等）
+.waline-action-btn,
+.waline-like,
+.waline-reply {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: transparent;
+  border: none;
+  color: var(--text-color-secondary, #8b949e);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0.375rem 0.625rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: var(--bg-color-secondary, #f6f8fa);
+    color: var(--accent-color, #3eaf7c);
+  }
+  
+  svg,
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// 点赞按钮激活状态
+.waline-like.active {
+  color: #ff6b6b;
+  
+  &:hover {
+    color: #ff5252;
+  }
+}
+
+// 管理员操作按钮
+.waline-admin-action {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color, #eaecef);
+  
+  button {
+    background: transparent;
+    border: 1px solid var(--border-color, #eaecef);
+    border-radius: 6px;
+    padding: 0.375rem 0.875rem;
+    font-size: 12px;
+    color: var(--text-color-secondary, #8b949e);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: var(--accent-color, #3eaf7c);
+      color: var(--accent-color, #3eaf7c);
+    }
+  }
+}
+
+// 回复评论样式
+.waline-reply-item,
+.waline-nested,
+.waline-reply {
+  margin-left: 2rem;
+  margin-top: 1rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--border-color, #eaecef);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, 
+      var(--accent-color, #3eaf7c) 0%, 
+      transparent 100%);
+    opacity: 0.3;
+  }
+  
+  .waline-comment,
+  .waline-item {
+    background: var(--bg-color-secondary, #f6f8fa);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+// 加载状态
+.waline-loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-color-secondary, #8b949e);
+  font-size: 14px;
+}
+
+// 空状态
+.waline-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-color-secondary, #8b949e);
+  font-size: 14px;
+}
+
+// Powered by Waline 链接
+.waline-powered {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color, #eaecef);
+  font-size: 12px;
+  color: var(--text-color-secondary, #8b949e);
+  
+  a {
+    color: var(--text-color-secondary, #8b949e);
+    text-decoration: none;
+    
+    &:hover {
+      color: var(--accent-color, #3eaf7c);
+    }
+  }
+}
+
+// 暗色模式适配
+[data-theme="dark"] {
+  .waline-input-wrapper,
+  .waline-editor {
+    background: var(--bg-color-secondary, #161b22);
+    border-color: var(--border-color, #30363d);
+    
+    &:hover {
+      border-color: var(--accent-color, #3eaf7c);
+      box-shadow: 0 2px 8px rgba(62, 175, 124, 0.2);
+    }
+  }
+  
+  .waline-comment,
+  .waline-item {
+    background: var(--bg-color-secondary, #161b22);
+    border-color: var(--border-color, #30363d);
+    
+    &:hover {
+      border-color: var(--accent-color, #3eaf7c);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  .waline-reply-item .waline-comment {
+    background: var(--bg-color, #0d1117);
+  }
+  
+  .waline-action-btn:hover {
+    background: var(--bg-color, #0d1117);
+  }
+}
+
+// 移动端响应式
+@media (max-width: 768px) {
+  .waline-input-wrapper,
+  .waline-editor {
+    padding: 1rem;
+  }
+  
+  .waline-comment,
+  .waline-item {
+    padding: 1rem;
+  }
+  
+  .waline-comment-count {
+    font-size: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .waline-sort-btn {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .waline-reply-item {
+    margin-left: 1rem;
+    padding-left: 0.75rem;
+  }
+  
+  .waline-comment-header {
+    flex-wrap: wrap;
+  }
+  
+  .waline-action {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+
+// 平板端优化
+@media (max-width: 1024px) and (min-width: 769px) {
+  .waline-comment,
+  .waline-item {
+    padding: 1.125rem;
+  }
+}
+

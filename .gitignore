@@ -1,0 +1,30 @@
+# 排除计算机组成原理教程
+docs/tutorials/computer-basics/computer-organization/
+
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+.vuepress/dist/
+.temp/
+.cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+*.log
+
+# 环境变量
+.env
+.env.local
+
+# GitHub Actions (不使用 GitHub Pages 部署)
+.github/
