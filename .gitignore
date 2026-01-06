@@ -25,6 +25,3 @@ Thumbs.db
 # 环境变量
 .env
 .env.local
-
-# GitHub Actions (不使用 GitHub Pages 部署)
-.github/

@@ -8,6 +8,61 @@ import IconMessageBoard from './components/IconMessageBoard.vue'
 import IconUser from './components/IconUser.vue'
 import FriendshipLinks from './components/FriendshipLinks.vue'
 
+// 性能优化工具函数
+const utils = {
+    // 防抖函数
+    debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+        let timeout: ReturnType<typeof setTimeout> | null = null
+        return function executedFunction(...args: Parameters<T>) {
+            const later = () => {
+                timeout = null
+                func(...args)
+            }
+            if (timeout) clearTimeout(timeout)
+            timeout = setTimeout(later, wait)
+        }
+    },
+    
+    // 节流函数
+    throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
+        let inThrottle: boolean
+        return function executedFunction(...args: Parameters<T>) {
+            if (!inThrottle) {
+                func(...args)
+                inThrottle = true
+                setTimeout(() => inThrottle = false, limit)
+            }
+        }
+    },
+    
+    // 智能延迟执行（使用 requestIdleCallback 或 setTimeout）
+    idleCallback(callback: () => void, timeout = 2000): void {
+        if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+            requestIdleCallback(callback, { timeout })
+        } else {
+            setTimeout(callback, Math.min(timeout, 100))
+        }
+    },
+    
+    // 等待 DOM 就绪
+    waitForDOM(callback: () => void, maxAttempts = 10, interval = 100): void {
+        let attempts = 0
+        const check = () => {
+            attempts++
+            if (document.readyState === 'complete' || attempts >= maxAttempts) {
+                callback()
+            } else {
+                setTimeout(check, interval)
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', callback)
+        } else {
+            check()
+        }
+    }
+}
+
 export default defineClientConfig({
     enhance({ app, router, siteData }) {
         // 注册图标组件
@@ -86,9 +141,10 @@ export default defineClientConfig({
                 }
             };
             
-            // 延迟执行，确保DOM加载完成
-            setTimeout(addSearchShortcut, 1000);
-            setTimeout(addSearchShortcut, 2000);
+            // 优化：使用智能延迟执行，避免重复调用
+            utils.waitForDOM(() => {
+                utils.idleCallback(addSearchShortcut, 500)
+            })
             
             // 添加搜索快捷键功能
             document.addEventListener('keydown', (e) => {
@@ -102,9 +158,22 @@ export default defineClientConfig({
             });
         }
         
-        // 优化图片懒加载
+        // 优化图片懒加载和 WebP 支持
         if (typeof window !== 'undefined') {
-            const initImageLazyLoad = () => {
+            // 检测 WebP 支持
+            const supportsWebP = (): Promise<boolean> => {
+                return new Promise((resolve) => {
+                    const webP = new Image();
+                    webP.onload = webP.onerror = () => {
+                        resolve(webP.height === 2);
+                    };
+                    webP.src = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6zbAAA/v56QAAAAA==';
+                });
+            };
+            
+            const initImageLazyLoad = async () => {
+                const webPSupported = await supportsWebP();
+                
                 // 为所有图片添加 loading="lazy" 属性（如果还没有）
                 const allImages = document.querySelectorAll('img:not([loading])');
                 allImages.forEach((img) => {
@@ -115,6 +184,20 @@ export default defineClientConfig({
                         // 保存原始 src 到 data-src
                         if (!imageElement.dataset.src) {
                             imageElement.dataset.src = imageElement.src;
+                        }
+                        
+                        // 尝试使用 WebP 格式（如果支持）
+                        if (webPSupported && !imageElement.src.includes('.webp')) {
+                            const webpSrc = imageElement.src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+                            // 预加载 WebP 版本，如果失败则使用原图
+                            const testImg = new Image();
+                            testImg.onload = () => {
+                                imageElement.src = webpSrc;
+                                if (imageElement.dataset.src) {
+                                    imageElement.dataset.src = webpSrc;
+                                }
+                            };
+                            testImg.src = webpSrc;
                         }
                     }
                 });
@@ -173,16 +256,21 @@ export default defineClientConfig({
                 }
             };
 
+            // 优化：使用防抖和智能延迟执行
+            const debouncedImageLazyLoad = utils.debounce(initImageLazyLoad, 100)
+            
             // DOMContentLoaded 时立即初始化
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initImageLazyLoad);
+                document.addEventListener('DOMContentLoaded', () => {
+                    utils.idleCallback(initImageLazyLoad, 200)
+                });
             } else {
-                initImageLazyLoad();
+                utils.idleCallback(initImageLazyLoad, 200)
             }
 
-            // 路由变化后重新初始化
+            // 路由变化后重新初始化（使用防抖）
             router.afterEach(() => {
-                setTimeout(initImageLazyLoad, 100);
+                debouncedImageLazyLoad()
             });
             
             // 页面可见性变化时重新检查（用户切换标签页回来时）
@@ -332,22 +420,25 @@ export default defineClientConfig({
                 }
             };
             
-            // 初始执行（延迟以确保 DOM 加载完成）
-            setTimeout(toggleComments, 500);
-            setTimeout(toggleComments, 1000);
-            setTimeout(toggleComments, 2000);
-            setTimeout(hideToc, 500);
-            setTimeout(adjustGuestbookWidth, 500);
-            setTimeout(adjustGuestbookWidth, 1000);
-            setTimeout(adjustGuestbookWidth, 2000);
+            // 优化：使用防抖和智能延迟执行，避免重复调用
+            const debouncedToggleComments = utils.debounce(toggleComments, 150)
+            const debouncedHideToc = utils.debounce(hideToc, 150)
+            const debouncedAdjustGuestbookWidth = utils.debounce(adjustGuestbookWidth, 150)
             
-            // 路由变化后重新执行
+            // 初始执行（使用智能延迟）
+            utils.waitForDOM(() => {
+                utils.idleCallback(() => {
+                    debouncedToggleComments()
+                    debouncedHideToc()
+                    debouncedAdjustGuestbookWidth()
+                }, 300)
+            })
+            
+            // 路由变化后重新执行（使用防抖）
             router.afterEach(() => {
-                setTimeout(toggleComments, 100);
-                setTimeout(toggleComments, 500);
-                setTimeout(hideToc, 500);
-                setTimeout(adjustGuestbookWidth, 500);
-                setTimeout(adjustGuestbookWidth, 1000);
+                debouncedToggleComments()
+                debouncedHideToc()
+                debouncedAdjustGuestbookWidth()
             });
 
             // 监听 DOM 变化，确保动态加载的内容也能应用样式
@@ -368,7 +459,7 @@ export default defineClientConfig({
                 });
             }
 
-            // 定期检查并应用样式（确保 Waline 加载后也能应用）
+            // 优化：使用 MutationObserver 替代轮询，性能更好
             const checkAndAdjust = () => {
                 const currentPath = window.location.pathname;
                 const isGuestbook = currentPath.includes('/guestbook/') || 
@@ -377,28 +468,29 @@ export default defineClientConfig({
                 if (isGuestbook) {
                     const hasWaline = document.querySelector('.waline-wrapper, #waline, .waline-container');
                     if (hasWaline) {
-                        adjustGuestbookWidth();
-                        return true; // 找到了 Waline，返回 true
+                        debouncedAdjustGuestbookWidth();
+                        return true;
                     }
                 }
-                return false; // 没找到或不是留言板页面
+                return false;
             };
 
-            // 每 200ms 检查一次，最多检查 30 次（6秒），确保 Waline 完全加载后也能应用
-            let checkCount = 0;
-            const checkInterval = setInterval(() => {
-                const found = checkAndAdjust();
-                checkCount++;
-                // 如果找到了 Waline 且已经应用了样式，继续检查几次确保稳定
-                if (found && checkCount > 5) {
-                    // 再检查几次确保样式稳定应用
-                    if (checkCount >= 15) {
-                        clearInterval(checkInterval);
-                    }
-                } else if (checkCount >= 30) {
-                    clearInterval(checkInterval);
-                }
-            }, 200);
+            // 使用 MutationObserver 监听 DOM 变化，替代轮询
+            if (typeof MutationObserver !== 'undefined') {
+                const walineObserver = new MutationObserver(utils.debounce(() => {
+                    checkAndAdjust()
+                }, 200))
+                
+                walineObserver.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                })
+                
+                // 设置超时，避免无限观察
+                setTimeout(() => {
+                    walineObserver.disconnect()
+                }, 10000) // 10秒后停止观察
+            }
             
             // 在博客列表页加载 Waline 浏览量统计（已禁用，不在卡片上显示浏览量）
             const initBlogListPageviews = () => {
@@ -774,24 +866,20 @@ export default defineClientConfig({
                 }
             };
             
-            // 初始执行（延迟更长时间，确保 DOM 完全加载）
-            setTimeout(() => {
+            // 优化：使用智能延迟执行，避免重复调用
+            const debouncedInitPageviews = utils.debounce(() => {
                 (window as any).__pageviewRetryCount = 0;
                 initBlogListPageviews();
-            }, 2000);
-            setTimeout(() => {
-                if (!(window as any).__pageviewInitialized) {
-                    (window as any).__pageviewRetryCount = 0;
-                    initBlogListPageviews();
-                }
-            }, 4000);
+            }, 300)
             
-            // 路由变化后重新执行
+            // 初始执行（使用智能延迟）
+            utils.waitForDOM(() => {
+                utils.idleCallback(debouncedInitPageviews, 1000)
+            })
+            
+            // 路由变化后重新执行（使用防抖）
             router.afterEach(() => {
-                (window as any).__pageviewRetryCount = 0;
-                setTimeout(() => {
-                    initBlogListPageviews();
-                }, 1000);
+                debouncedInitPageviews()
             });
             
             // 监听 DOM 变化，确保动态加载的内容也能加载浏览量（使用防抖）
@@ -842,14 +930,15 @@ export default defineClientConfig({
       `;
             document.body.appendChild(progressBar);
 
-            const updateProgress = () => {
+            // 优化：使用节流优化滚动事件
+            const updateProgress = utils.throttle(() => {
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
                 const progress = (scrollTop / scrollHeight) * 100;
                 progressBar.style.width = progress + '%';
-            };
+            }, 16); // 约 60fps
 
-            window.addEventListener('scroll', updateProgress);
+            window.addEventListener('scroll', updateProgress, { passive: true });
             updateProgress();
 
             // 个人信息卡片交互
@@ -917,10 +1006,10 @@ export default defineClientConfig({
                 });
             };
 
-            // 多次尝试初始化以确保成功
-            setTimeout(initProfileCard, 500);
-            setTimeout(initProfileCard, 1000);
-            setTimeout(initProfileCard, 2000);
+            // 优化：使用智能延迟执行，避免重复调用
+            utils.waitForDOM(() => {
+                utils.idleCallback(initProfileCard, 500)
+            })
             
             // 隐藏博客卡片上的浏览量和小眼睛图标
             const hideBlogCardPageviews = () => {
@@ -1047,28 +1136,17 @@ export default defineClientConfig({
                 }
             };
             
-            // 立即执行
-            hideBlogCardPageviews();
+            // 优化：使用防抖和智能延迟执行
+            const debouncedHidePageviews = utils.debounce(hideBlogCardPageviews, 150)
             
-            // 延迟执行，确保DOM完全加载
-            setTimeout(hideBlogCardPageviews, 100);
-            setTimeout(hideBlogCardPageviews, 500);
-            setTimeout(hideBlogCardPageviews, 1000);
-            setTimeout(hideBlogCardPageviews, 2000);
-            setTimeout(hideBlogCardPageviews, 3000);
+            // 初始执行（使用智能延迟）
+            utils.waitForDOM(() => {
+                utils.idleCallback(debouncedHidePageviews, 200)
+            })
             
-            // 监听DOM变化，确保动态加载的内容也能隐藏浏览量
+            // 监听DOM变化，确保动态加载的内容也能隐藏浏览量（使用防抖）
             if (typeof MutationObserver !== 'undefined') {
-                let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-                const pageviewObserver = new MutationObserver(() => {
-                    // 防抖处理，避免频繁调用
-                    if (debounceTimer) {
-                        clearTimeout(debounceTimer);
-                    }
-                    debounceTimer = setTimeout(() => {
-                        hideBlogCardPageviews();
-                    }, 100);
-                });
+                const pageviewObserver = new MutationObserver(debouncedHidePageviews);
                 
                 pageviewObserver.observe(document.body, {
                     childList: true,
@@ -1088,10 +1166,10 @@ export default defineClientConfig({
             // 监听路由变化（通过 VuePress 路由）
             if (typeof window !== 'undefined' && (window as any).__VUEPRESS_ROUTER__) {
                 (window as any).__VUEPRESS_ROUTER__.afterEach(() => {
-                    setTimeout(initProfileCard, 1000);
+                    utils.idleCallback(initProfileCard, 500)
                     
-                    // 路由变化后重新添加搜索快捷键
-                    setTimeout(() => {
+                    // 路由变化后重新添加搜索快捷键（使用防抖）
+                    utils.idleCallback(() => {
                         const addSearchShortcut = () => {
                             const searchBox = document.querySelector('.navbar-search input, .search-box input, input[type="search"]');
                             if (searchBox && !document.querySelector('.search-shortcut-hint')) {
@@ -1146,7 +1224,7 @@ export default defineClientConfig({
                             }
                         };
                         addSearchShortcut();
-                    }, 500);
+                    }, 300);
                 });
             }
         }

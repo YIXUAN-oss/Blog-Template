@@ -14,8 +14,65 @@ export default defineUserConfig({
     // GitHub Pages: 使用 /your-repo-name/
     base: process.env.VERCEL || process.env.NODE_ENV === 'development' ? '/' : '/your-repo-name/',
 
-    // 使用 Vite 打包工具
-    bundler: viteBundler(),
+    // 使用 Vite 打包工具，并优化构建配置
+    bundler: viteBundler({
+        viteOptions: {
+            build: {
+                // 启用代码分割
+                rollupOptions: {
+                    output: {
+                        // 手动代码分割，优化加载性能
+                        manualChunks: (id) => {
+                            // 将 node_modules 中的依赖分离
+                            if (id.includes('node_modules')) {
+                                // Vue 相关库单独打包
+                                if (id.includes('vue') || id.includes('@vue')) {
+                                    return 'vue-vendor'
+                                }
+                                // 主题相关库单独打包
+                                if (id.includes('vuepress-theme-reco')) {
+                                    return 'theme-vendor'
+                                }
+                                // 其他第三方库
+                                return 'vendor'
+                            }
+                        },
+                        // 优化 chunk 文件名
+                        chunkFileNames: 'assets/js/[name]-[hash].js',
+                        entryFileNames: 'assets/js/[name]-[hash].js',
+                        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
+                    },
+                },
+                // 启用压缩
+                minify: 'terser',
+                terserOptions: {
+                    compress: {
+                        drop_console: true, // 生产环境移除 console
+                        drop_debugger: true,
+                    },
+                },
+                // 启用 CSS 代码分割
+                cssCodeSplit: true,
+                // 设置 chunk 大小警告限制
+                chunkSizeWarningLimit: 1000,
+                // 启用 sourcemap（可选，生产环境可关闭以减小体积）
+                sourcemap: false,
+            },
+            // 优化依赖预构建
+            optimizeDeps: {
+                include: [
+                    'vue',
+                    'vuepress',
+                    'vuepress-theme-reco',
+                ],
+            },
+            // 服务器配置（开发环境）
+            // 注意：Vite 的 HTTP/2 支持通过 https 选项启用
+            // server: {
+            //     https: true, // 启用 HTTPS 以支持 HTTP/2
+            // },
+        },
+    }),
 
     // 配置 URL 格式：启用 cleanUrls 可生成不带 .html 扩展名的 URL
     // 注意：VuePress 2.x 可能不支持此配置
@@ -27,20 +84,56 @@ export default defineUserConfig({
         // ['meta', { name: 'algolia-site-verification', content: 'your-algolia-verification' }],
         ['link', { rel: 'icon', href: '/favicon.png' }],
         
-        // 图片 CDN 优化：DNS 预解析和预连接
+        // 性能优化：DNS 预解析和预连接
         ['link', { rel: 'dns-prefetch', href: 'https://cdn.jsdelivr.net' }],
         ['link', { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: 'anonymous' }],
         // 备用 CDN 预连接（如果使用其他 CDN）
         ['link', { rel: 'dns-prefetch', href: 'https://gitcode.net' }],
         ['link', { rel: 'dns-prefetch', href: 'https://gitee.com' }],
+        
+        // 关键资源预加载（Logo 和头像）
+        ['link', { rel: 'preload', href: '/logo.png', as: 'image' }],
+        ['link', { rel: 'preload', href: '/avatar.png', as: 'image' }],
+        
+        // 性能优化：减少渲染阻塞
+        ['meta', { name: 'format-detection', content: 'telephone=no' }],
+        ['meta', { 'http-equiv': 'x-dns-prefetch-control', content: 'on' }],
 
-        // 自定义搜索框样式
+        // 自定义搜索框样式（关键 CSS 内联，减少渲染阻塞）
         ['style', {}, `
             .search-box { width: 230px !important; min-width: 230px !important; max-width: 230px !important; }
             .search-box input { width: 100% !important; }
             @media (max-width: 768px) {
                 .search-box { width: 200px !important; min-width: 200px !important; max-width: 200px !important; }
             }
+        `],
+        
+        // 性能优化：延迟加载非关键 CSS
+        ['script', {}, `
+            // 延迟加载非关键 CSS，提升首屏加载速度
+            (function() {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', loadNonCriticalCSS);
+                } else {
+                    loadNonCriticalCSS();
+                }
+                
+                function loadNonCriticalCSS() {
+                    // 使用 requestIdleCallback 延迟加载非关键样式
+                    if ('requestIdleCallback' in window) {
+                        requestIdleCallback(function() {
+                            loadStyles();
+                        }, { timeout: 2000 });
+                    } else {
+                        setTimeout(loadStyles, 2000);
+                    }
+                }
+                
+                function loadStyles() {
+                    // 这里可以预加载其他非关键 CSS 文件
+                    // 例如：评论系统样式、动画样式等
+                }
+            })();
         `],
 
         // Umami 统计分析（示例，按需开启并替换为你自己的配置）
@@ -62,10 +155,16 @@ export default defineUserConfig({
         // 最后更新时间
         lastUpdatedText: '最后更新时间',
 
-        // 自动设置分类
+        // 自动设置分类（推荐保持开启，主题会根据 Frontmatter 自动归类）
         autoSetBlogCategories: true,
 
-        // 自动设置系列
+        // 自动设置系列（推荐保持开启）
+        // 说明：
+        // - 默认使用目录结构自动生成系列 / 侧边栏
+        // - 一般情况下你不需要手动配置 series
+        // - 如果你希望精确控制某个教程的章节顺序或分组
+        //   可以在 recoTheme({ ... }) 中单独添加 series 配置
+        //   具体示例请查看仓库根目录的《使用指南.md》中「系列 / 侧边栏配置」章节
         autoSetSeries: true,
 
         // 移动端优化
@@ -82,89 +181,59 @@ export default defineUserConfig({
             { text: '关于', link: '/about/', icon: 'IconUser' },
         ],
 
-        // 系列配置 - 禁用所有侧边栏
+        // 教程中心侧边栏 / 系列示例配置
+        // 说明：
+        // - 这里仅对 /tutorials/ 以及 example-tutorial 做了示例
+        // - 你可以按相同格式为自己的教程路径新增或调整
         series: {
-            // Java后端
-            '/tutorials/java-backend/java/': [],
-            '/tutorials/java-backend/mysql/': [],
-            '/tutorials/java-backend/redis/': [],
-            '/tutorials/java-backend/maven/': [],
-            '/tutorials/java-backend/mybatis/': [],
-            '/tutorials/java-backend/mybatisPlus/': [],
-            '/tutorials/java-backend/spring/': [],
-            '/tutorials/java-backend/springboot/': [],
-            '/tutorials/java-backend/springmvc/': [],
-            '/tutorials/java-backend/springcloud/': [],
-            '/tutorials/java-backend/elasticsearch/': [],
-            '/tutorials/java-backend/rabbitmq/': [],
-            '/tutorials/java-backend/jdbc/': [],
-            '/tutorials/java-backend/servlet/': [],
+            // 教程中心总入口的侧边栏
+            // '/tutorials/': [
+            //     {
+            //         text: '教程中心',
+            //         children: [
+            //             '/tutorials/README.md',
+            //             '/tutorials/example-tutorial/README.md',
+            //             '/tutorials/another-tutorial/README.md',
+            //         ],
+            //     },
+            // ],
 
-            // Python人工智能
-            '/tutorials/python-ai/python/': [],
-            '/tutorials/python-ai/numpy/': [],
-            '/tutorials/python-ai/pandas/': [],
-            '/tutorials/python-ai/matplotlib/': [],
-            '/tutorials/python-ai/scikitlearn/': [],
-            '/tutorials/python-ai/tensorflow/': [],
-            '/tutorials/python-ai/pytorch/': [],
-            '/tutorials/python-ai/nlp/': [],
-            '/tutorials/python-ai/cv/': [],
-
-            // Java 转大模型开发
-            '/tutorials/java-to-llm/01-prerequisites/': [],
-            '/tutorials/java-to-llm/02-llm-fundamentals/': [],
-            '/tutorials/java-to-llm/03-prompt-engineering/': [],
-            '/tutorials/java-to-llm/04-api-integration/': [],
-            '/tutorials/java-to-llm/05-spring-ai/': [],
-            '/tutorials/java-to-llm/06-vector-databases/': [],
-            '/tutorials/java-to-llm/07-rag-applications/': [],
-            '/tutorials/java-to-llm/08-agent-development/': [],
-            '/tutorials/java-to-llm/09-fine-tuning/': [],
-            '/tutorials/java-to-llm/10-enterprise-practices/': [],
-            '/tutorials/java-to-llm/11-projects/': [],
-
-            // 计算机基础
-            '/tutorials/computer-basics/network/': [],
-            '/tutorials/computer-basics/operating-system/': [],
-            '/tutorials/computer-basics/computer-organization/': [],
-            '/tutorials/computer-basics/data-structures/': [],
-
-            // 开发工具
-            '/tutorials/development-tools/git/': [],
-
-            // DevOps
-            '/tutorials/devops-engineer/docker/': [],
-
-            // HarmonyOS 开发
-            '/tutorials/harmonyos-dev/': [],
-            '/tutorials/harmonyos-dev/01-harmonyos-next-intro/': [],
-            '/tutorials/harmonyos-dev/02-arkts-advanced/': [],
-            '/tutorials/harmonyos-dev/03-arkui-next/': [],
-            '/tutorials/harmonyos-dev/04-state-management-next/': [],
-            '/tutorials/harmonyos-dev/05-ability-framework/': [],
-            '/tutorials/harmonyos-dev/06-navigation-router/': [],
-            '/tutorials/harmonyos-dev/07-data-management/': [],
-            '/tutorials/harmonyos-dev/08-network-connect/': [],
-            '/tutorials/harmonyos-dev/09-ai-native/': [],
-            '/tutorials/harmonyos-dev/10-distributed-next/': [],
-            '/tutorials/harmonyos-dev/11-graphics-animation/': [],
-            '/tutorials/harmonyos-dev/12-multimedia-next/': [],
-            '/tutorials/harmonyos-dev/13-service-card-next/': [],
-            '/tutorials/harmonyos-dev/14-security-privacy/': [],
-            '/tutorials/harmonyos-dev/15-performance-optimization/': [],
-            '/tutorials/harmonyos-dev/16-testing-devops/': [],
-            '/tutorials/harmonyos-dev/17-harmony-ecology/': [],
-
-            // 数据库
-            '/tutorials/database/mysql/': [],
-            '/tutorials/database/redis/': []
+            // example-tutorial 教程的章节侧边栏
+            '/tutorials/example-tutorial/': [
+                {
+                    text: '01-基础入门',
+                    children: [
+                        '/tutorials/example-tutorial/01-基础入门/README.md',
+                        '/tutorials/example-tutorial/01-基础入门/01-教程概述.md',
+                        '/tutorials/example-tutorial/01-基础入门/02-环境搭建.md',
+                        '/tutorials/example-tutorial/01-基础入门/03-第一个示例.md',
+                    ],
+                },
+                {
+                    text: '02-进阶内容',
+                    children: [
+                        '/tutorials/example-tutorial/02-进阶内容/README.md',
+                        '/tutorials/example-tutorial/02-进阶内容/01-高级特性.md',
+                        '/tutorials/example-tutorial/02-进阶内容/02-最佳实践.md',
+                        '/tutorials/example-tutorial/02-进阶内容/03-常见问题.md',
+                    ],
+                },
+                {
+                    text: '03-实战项目',
+                    children: [
+                        '/tutorials/example-tutorial/03-实战项目/README.md',
+                        '/tutorials/example-tutorial/03-实战项目/01-项目规划.md',
+                        '/tutorials/example-tutorial/03-实战项目/02-代码实现.md',
+                        '/tutorials/example-tutorial/03-实战项目/03-测试部署.md',
+                    ],
+                },
+            ],
         },
 
         // Algolia 搜索配置（已禁用，使用主题内置搜索，可按需开启）
         // algolia: {
-        //     appId: 'MLKOH1MKDT',
-        //     apiKey: '5af2979d2d290ce4e9247d7f89549455',
+        //     appId: '...',
+        //     apiKey: '...',
         //     indexName: 'your-blog-pages',
         //     // 可选：高级配置
         //     algoliaOptions: { 

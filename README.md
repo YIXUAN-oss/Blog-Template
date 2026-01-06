@@ -1,11 +1,10 @@
 # 懿轩的个人博客 | YiXuan's Blog
 
 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" style="border-radius: 8px;" />
-
----
-
 <img src="https://img.shields.io/badge/VuePress-2.x-green.svg" alt="VuePress" style="border-radius: 8px;" />
 <img src="https://img.shields.io/badge/theme-vuepress--reco-brightgreen.svg" alt="Theme" style="border-radius: 8px;" />
+
+---
 
 ## ✨ 特性
 
@@ -18,6 +17,20 @@
 - 🖼️ **图片懒加载** - 提升加载速度
 - 📊 **统计分析** - 可选集成Umami（自托管）
 - 🧩 **插件丰富** - 代码复制、阅读进度、页面滚动效果等
+
+<img src="attachments/image-20260106095219975.png" alt="image-20260106095219975" style="zoom: 33%;" />
+
+
+
+![image-20260105172609225](attachments/image-20260105172609225.png)
+
+![image-20260105172644256](attachments/image-20260105172644256.png)
+
+![image-20260105172703517](attachments/image-20260105172703517.png)
+
+![image-20260105172712002](attachments/image-20260105172712002.png)
+
+![image-20260105172724519](attachments/image-20260105172724519.png)
 
 ## 🚀 快速开始
 
@@ -89,33 +102,36 @@ tags:
 
 在 `docs/tutorials/` 目录下创建对应的教程分类文件夹。
 
-## 🌐 部署
+------
 
-### Vercel（推荐）
+## 📖 使用指南
 
-本项目已配置好 Vercel 部署，只需简单几步：
+> 💡 **完整的使用指南请查看：[使用指南.md](./使用指南.md)**
 
-1. **导入 GitHub 仓库**
-   - 访问 [Vercel](https://vercel.com)
-   - 点击 "Import Project"
-   - 选择此 GitHub 仓库
+使用指南包含以下内容：
 
-2. **配置项目**（已自动配置，无需修改）
-   - Framework Preset: `VuePress`
-   - Build Command: `npm run build`
-   - Output Directory: `docs/.vuepress/dist`
-   - Install Command: `npm install --legacy-peer-deps`
+- 🚀 **快速开始** - 克隆项目、安装依赖、本地开发、构建部署
+- ⚙️ **首次配置** - 修改个人信息、项目信息、配置部署路径
+- ✍️ **添加内容** - 添加博客文章、日常随笔、教程分类
+- 🎨 **自定义配置** - 修改主题色、导航栏、侧边栏、自定义样式
+- 🌐 **多语言配置** - 添加英文内容、配置语言切换
+- 🔌 **添加插件** - 评论系统（Giscus/Waline/Valine）、统计分析（Umami/Google Analytics）
+- 🚀 **部署指南** - GitHub Pages、Vercel（推荐）、自定义域名配置
 
-3. **部署**
-   - 点击 "Deploy" 即可
-   - 每次推送到 main 分支会自动重新部署
+**相关配置指南：**
 
-### GitHub Pages
+- 📝 [Waline 评论和浏览量配置指南](./Waline评论和浏览量配置指南.md)
+- 📝 [Valine 评论和浏览量配置指南](./Valine评论和浏览量配置指南.md)
+- 📊 [Umami 统计配置指南](./Umami统计配置指南.md)
+- 🌍 [Namesilo + Cloudflare 域名配置指南](./Namesilo和Cloudflare域名配置指南.md)
 
-1. 修改 `docs/.vuepress/config.ts` 中的 `base` 配置
-2. 执行 `npm run build`
-3. 将 `docs/.vuepress/dist` 目录推送到 `gh-pages` 分支
+---
 
+## 💡归档操作
+
+当按照上述配置成功后，可以删除下述文件或文件夹：
+
+<img src="attachments/image-20260106092619115.png" alt="image-20260106092619115" style="zoom:50%;" />
 
 ## 👤 作者
 
@@ -127,5 +143,4 @@ tags:
 ## 📄 许可证
 
 [MIT](LICENSE) © 懿轩
-
 
