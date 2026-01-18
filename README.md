@@ -1,4 +1,4 @@
-# 懿轩的个人博客 | YiXuan's Blog
+# [你的博客名称] | [Your Blog Name]
 
 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" style="border-radius: 8px;" />
 <img src="https://img.shields.io/badge/VuePress-2.x-green.svg" alt="VuePress" style="border-radius: 8px;" />
@@ -8,7 +8,7 @@
 
 ## ✨ 特性
 
-在线展示地址：[懿轩的博客](https://www.yixuan.cyou/)
+在线展示地址：[你的博客](https://your-domain.com/)
 
 - 🎨 **美观主题** - 支持卡片式布局、动画过渡、响应式设计
 - 🌐 **多语言支持** - 中文 / 英文 自动切换（可扩展更多语言）
@@ -137,12 +137,12 @@ tags:
 
 ## 👤 作者
 
-**懿轩 (YiXuan)**
+**[你的名字] ([Your Name])**
 
-- 📧 Email: byyi.xuan@outlook.com
-- 🐙 GitHub: [@YIXUAN-oss](https://github.com/YIXUAN-oss)
+- 📧 Email: your.email@example.com
+- 🐙 GitHub: [@your-username](https://github.com/your-username)
 
 ## 📄 许可证
 
-[MIT](LICENSE) © 懿轩
+[MIT](LICENSE) © [你的名字]
 
